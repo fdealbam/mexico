@@ -1,4 +1,4 @@
-#MEXICO 
+#NUEVO LEON 
 
 import os
 import pandas as pd
@@ -12,9 +12,8 @@ entidades_p= pd.read_csv("https://raw.githubusercontent.com/fdealbam/censo2020/m
 
 
 # Falta un identificador de la base 1) entidad 2)mpios
-
-df = entidades_s[entidades_s.ENTIDAD == 15]
-df_p = entidades_p[entidades_p.ENTIDAD == 15]
+df = entidades_s[entidades_s.ENTIDAD == 19]
+df_p = entidades_p[entidades_p.ENTIDAD == 19]
 
 
 noment = df.iloc[0]["NOM_ENT"]
@@ -35,7 +34,7 @@ derechopriv_s                                        = df.PAFIL_IPRIV.sum()  # P
 poblacion15ymasanalfabeta_s                          = df.P15YM_AN.sum()    # Población de 15 años y más analfabeta             
 poblacion15ymasconsecundaria_s                       = df.P15SEC_CO.sum()   # Población de 15 años y más con secundaria completa
 poblacion15ymasconposbasica_s                        = df.P18YM_PB.sum()    # Población de 18 años y más con educación posbásica
-#Agregadas nuevas variables de educación :)
+
 
 
 
@@ -82,6 +81,7 @@ poblacionOcupada_s                                   = df.POCUPADA.sum()     # p
 poblacionMasculinaOcupada_s                          = df.POCUPADA_M.sum()   # Población femenina de 12 años y más desocupada           
 poblacionFemeninaOcupada_s                           = df.POCUPADA_F.sum()   # Población masculina de 12 años y más ocupada                                           
 poblacion12ymasdesocupada_s                          = df.PDESOCUP.sum()     # Población de 12 años y más desocupada  
+poblacioninactiva_s                                  = df.PE_INAC.sum()                       
 
 
 #----------------------------------------------------Variables de Religión 
@@ -103,15 +103,18 @@ poblaciontotalenhogares_s                            = df.POBHOG.sum()       # P
 promediodeocupantesporvivienda                      =  df.PROM_OCUP.sum()    #Promedio de ocupantes en viviendas particulares habitadas
 
 
-###############################################################################
 
 
 
-# PORCETAJES
+############################################################################### PORCEnTAJES
+
+
+
+# PORCEnTAJES
 #---------------------------------Pob Total
 #ptotal_p                                             = df_p['POBTOT_%'].sum()
-#pfemto_p                                             = df_p['POBFEM_%'].sum()
-#pmascu_p                                             = df_p['POBMAS_%'].sum()
+pfemto_p                                             = (df_p['POBFEM_%'].sum()).round(1)
+pmascu_p                                             = df_p['POBMAS_%'].sum()
 
 #---------------------------------Derechohabiencia
 sinderechohabiencia_p                                = df_p['PSINDER_%'].sum()
@@ -165,7 +168,7 @@ poblacionde15añosymasnacidaotraentidad_p             = df_p['PRESOE15_%'].sum()
 poblacionOcupada_p                                   = (df_p['POCUPADA_%'].sum()).round(1)              
 poblacionMasculinaOcupada_p                          = (df_p['POCUPADA_M_%'].sum()).round(1)              
 poblacionFemeninaOcupada_p                           = (df_p['POCUPADA_F_%'].sum()).round(1)                                             
-poblacioninactiva_p                                 = (df_p['PE_INAC_%'].sum()).round(1)                       
+poblacioninactiva_p                                  = (df_p['PE_INAC_%'].sum()).round(1)                       
 poblacion12ymasdesocupada_p                          = (df_p['PDESOCUP_%'].sum()).round(1)     
 
 
@@ -308,7 +311,7 @@ card = dbc.Card(
             
             
             
-            #Primaria cambió :
+            # 15 años y más analfabeta
             html.P(
                 "Población de 15 años y más analfabeta "   #verificar este campo (alfabeta* o analfabeta)
                f"{int(poblacion15ymasanalfabeta_s):,}",    
@@ -324,7 +327,7 @@ card = dbc.Card(
                                html.H1(className="fas fa-user-graduate", style={"color": "#E0E0E0"}),
                           ]),),
             
-            #%
+            # % 15 años y más analfabeta
              html.P([(poblacion15ymasanalfabeta_p),"%"] ,
                   className="card-text",
                   style={'textAlign': 'right',
@@ -357,7 +360,6 @@ card = dbc.Card(
 
                           ],style={"align" :"center",
                                    'margin-left': '-30px',
-                                   #'margin-right': '120px',
                                   }),),
             
              html.P(
@@ -375,12 +377,6 @@ card = dbc.Card(
                                html.H1(className="fas fa-wheelchair", style={"color": "#E0E0E0"}),]),),
             html.P([(condiscapacidad_p),"%"] , 
                   className="card-text",
-#                     style={'textAlign': 'center',
-#                         "color": "black",  
-#                         "font-size": "40px",
-#                         "font-weight": 'bold',
-#                        "color": "dark",
-#                        "height": "30px",}),
                     style={'textAlign': 'right',
                          "color": "black",  
                          "font-size": "48px",
@@ -391,9 +387,7 @@ card = dbc.Card(
     
     style={"width": "22.5rem", 
           "border": "0",
-           "card-border": "0",
-           # 'margin-left': '-30px'
-          },
+           "card-border": "0"},
 )
 
 
@@ -409,45 +403,59 @@ card = dbc.Card(
 
 card2 = dbc.Card(
     dbc.CardBody(
-        [                #Falta Poblacion masculina y femenina
+        [   
+             #Falta Poblacion total
             html.H6("Población total", 
-                    style={'textAlign': 'left',
+                    style={#'textAlign': 'left',
                            "color": "white",
                           "background-color": "orange"}),
             html.H3(f"{int(ptotal_s):,}",
-                    style={'textAlign': 'left',
+                    style={#'textAlign': 'left',
                            "color": "white",
                           "background-color": "orange"}),
-            html.Br(),
-       
-            dbc.ButtonGroup(
-                html.Span(["", html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),
-                               html.H1(className="fas fa-male", style={"background-color": "orange","color":"white"}),]),),
+            dbc.Button(
+                html.Span([html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                           html.H1(className="fas fa-male", style={"color":   "white"}),
+                           html.H1(className="fas fa-female", style={"color": "white"}),
+                          ],style={#"background-color": "orange"
+                                  }),style={"background-color": "orange"}),
+
             
-        ]
-    ),
-    
-    style={"width": "25.5rem", 
-          "border": "0",
-          "background-color": "orange"
-          },
-)
+              #Falta Poblacion masculina y femenina
+#             html.Span([
+#                html.H6([pfemto_p, "%  "], style={"color": "white", "background-color": "orange"}), 
+#                html.H1(className="fas fa-female",  
+#                                  style={"color": "white", "background-color": "orange"}),
+#
+#                html.H6([pmascu_p, "%  "], style={"color": "white", "background-color": "orange"}), 
+#                html.H1(className="fas fa-male",  
+#                                  style={"color": "white", "background-color": "orange"}),
+# 
+#        ]),
+                           
+        ]), 
+                            style={"width": "25rem", 
+                                   "border": "0",
+                                   "margin-left": "-10px",
+                                   #"height": "10px",
+                                   "background-color": "orange",
+                                  },) 
 
-
-  
-    
-     
+            
 
 card21 = dbc.Card(
     dbc.CardBody(
@@ -463,7 +471,8 @@ card21 = dbc.Card(
                            "color": "white",
                           "background-color": "#0097A7"}),
            
-                     html.P([(de0a2años_p),"%"] , #"64%", 
+          
+            html.P([(de0a2años_p),"%"] , #"64%", 
                   style={'textAlign': 'right',
                          "color": "white",
                             "height": "7px",
@@ -845,55 +854,107 @@ card3 = dbc.Card(
 card2p3 = dbc.Card(
     dbc.CardBody(
         [
-         dbc.Button((["", html.H1(className="fas fa-wifi", style={"color": "black",
+         dbc.Button((["", html.H3(className="fas fa-wifi", style={"color": "green",
                                                                  "background-color": "light"}),
                  html.H6(" Con internet ",
                         style={"color":"black",
+                               "font-size":10,
                                 "background-color": "light"}),
-                 html.H1([(coninternet_p),"%"],#"97%",
+                 html.H4([(coninternet_p),"%"],#"97%",
                         style={"color":"#FBC02D",
                                 "background-color": "light"}),
                  html.P(f"{int(coninternet_s):,}", style={"font-size":10}),                      
         ]),style={ "background-color": "light"}),
 
             
-         dbc.Button((["", html.H1(className="fas fa-tv", 
-                                  style={"color": "lightgray",
+         dbc.Button((["", html.H3(className="fas fa-tv", 
+                                  style={"color": "black",
                                          "background-color": "light"}),
                  html.H6(" Con televisor ", 
-                         style={"color":"lightgray",
+                         style={"color":"black",
+                                 "font-size":10,
                                 "background-color": "light"}),
-                 html.H1([(contelevisor_p),"%"],#"97%",  
+                 html.H4([(contelevisor_p),"%"],#"97%",  
                          style={"color":"#FBC02D",
                                 "background-color": "light"}),
                  html.P(f"{int(contelevisor_s):,}",  style={"font-size":10}),                      
         ]),style={ "background-color": "light"}),
 
-         dbc.Button((["", html.H1(className="fas fa-laptop", style={"color": "lightgray",
+         dbc.Button((["", html.H3(className="fas fa-laptop", style={"color": "dark",
                                                                    "background-color": "light"}),
                  html.H6(" Con computadora ",
-                         style={"color":"lightgray",
+                         style={"color":"black",
+                                 "font-size":10,
                                 "background-color": "light"}),
-                 html.H1([(concomputadora_p),"%"],#"97%",
+                 html.H4([(concomputadora_p),"%"],#"97%",
                         style={"color":"#FBC02D",
                                 "background-color": "light"}),# 
                  html.P(f"{int(concomputadora_s):,}", style={"font-size":10}),                      
         ]),style={ "background-color": "light"}),
             
 
-         dbc.Button((["", html.H1(className="fas fa-mobile-alt", style={"color": "black",
+         dbc.Button((["", html.H3(className="fas fa-mobile-alt", style={"color": "black",
                                                                        "background-color": "light"}),
                  html.H6(" Con celular ",
-                        style={"color":"black",
+                        style={"color":"blue",
+                                "font-size":10,
                                 "background-color": "light"}),
-                 html.H1([(concelular_p),"%"],#"97%",
+                 html.H4([(concelular_p),"%"],#"97%",
                         style={"color":"#FBC02D",
                                 "background-color": "light"}),
                  html.P(f"{int(concelular_s):,}", style={"font-size":10}),                      
         ]),style={ "background-color": "light"}),
+        
+#poner aqui refrigerador  
+         dbc.Button((["", html.H3(dbc.CardImg(src= "https://raw.githubusercontent.com/fdealbam/nuevoleon/main/application/static/refrigerator-light.svg?raw=true", 
+                                style={"color": "black",
+                                       "height" :"25px",
+                                      "background-clor": "light"})),
+
+                 html.H6(" Con refrigerador ",
+                        style={"color":"black",
+                                "font-size":10,
+                                "background-color": "light"}),
+                 html.H4([(conrefrigerador_p),"%"],#"97%",
+                        style={"color":"#FBC02D",
+                                "background-color": "light"}),
+                 html.P(f"{int(conrefrigerador_s):,}", style={"font-size":10}),                      
+        ]),style={ "background-color": "light"}),
+            
+
+#poner aqui lavadora            
+         dbc.Button((["", html.H3(dbc.CardImg(src= "https://raw.githubusercontent.com/fdealbam/censo2020/main/laundry.svg?raw=true", 
+                                style={"color": "black",
+                                       "height" :"25px",
+                                      "background-clor": "light"})),
+                      html.H6(" Con lavadora ",
+                        style={"color":"black",
+                                "font-size":10,
+                                "background-color": "light"}),
+                 html.H4([(conlavadora_p),"%"],#"97%",
+                        style={"color":"#FBC02D",
+                                "background-color": "light"}),
+                 html.P(f"{int(conlavadora_s):,}", style={"font-size":10}),                      
+        ]),style={ "background-color": "light"}),
+
+
+#poner aqui bicicleta            
+         dbc.Button((["", html.H2(className="fas fa-bicycle", style={"color": "green",
+                                                                       "background-color": "light"}),
+                 html.H6(" Con bicicleta",
+                        style={"color":"black",
+                                "font-size":10,
+                                "background-color": "light"}),
+                 html.H4([(conbici_p),"%"],#"97%",
+                        style={"color":"#FBC02D",
+                                "background-color": "light"}),
+                 html.P(f"{int(conbici_s):,}", style={"font-size":10}),                      
+        ]),style={ "background-color": "light"}),
             
      
-        ]), style={"width": "50rem", 
+        ]), style={"width": "45rem",
+                   "margin-left": "46.5px",
+                   "margin-right": "46.5px",
                    "border": "0",
                    "background-color": "light",
                   "outline": "white"
@@ -1046,8 +1107,7 @@ row2 = html.Tr([dbc.Alert("Población en hogares con jefatura masculina", color=
 
 row3 = html.Tr([dbc.Alert("Población en hogares con jefatura femenina", color="#E0E0E0",), 
                 html.Td(f"{int(poblacionenhogaresconjefaturafemenina_s):,}"),
-                dbc.Alert([(poblacionenhogaresconjefaturafemenina_p),"%"],
-                          color="light",
+                dbc.Alert([(poblacionenhogaresconjefaturafemenina_p),"%"], color="light",
                         style={"font-size": "35px",
                         "font-weight": 'bold',
                         "color": "#F48FB1",       
@@ -1090,6 +1150,7 @@ card_v_hog_cens = dbc.Card(
     
     style={"width": "50rem", 
           "border": "0",
+           "stripped": True,
           "fill" : "orange"},
 )
 
@@ -1241,11 +1302,11 @@ card_econom4 = dbc.Card(
                            "color": "white",
                             "height": "7px",
                           "background-color": "#0097A7"}),
-          # html.H5(f"{int(poblacioninactiva_s):,}", 
-          #         style={'textAlign': 'left',
-          #                 "height": "7px",
-          #                "color": "white",
-          #               "background-color": "#0097A7"}),
+            html.H5(f"{int(poblacioninactiva_s):,}", 
+                    style={'textAlign': 'left',
+                            "height": "7px",
+                           "color": "white",
+                          "background-color": "#0097A7"}),
             html.H2([(poblacioninactiva_p),"%"],#"95%", 
                   style={'textAlign': 'right',
                          "color": "white",
@@ -1638,8 +1699,41 @@ card_v_derechohab = dbc.Card(
            "fill" : "orange"},)
     
     
+    #### graph de hogares censales 
+
+val1fem= df.PHOGJEF_F.sum()
+val2hom= df.PHOGJEF_M.sum()
+
+hogcensjefgender = px.pie(df, 
+                          values= [val1fem, val2hom], 
+                          names=[df.NOM_ENT,df.ENTIDAD],
+                color_discrete_sequence= px.colors.sequential.Blues, 
+                          hole=.5)
+
+hogcensjefgender.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                  plot_bgcolor='rgba(0,0,0,0)',
+                  uniformtext_minsize=6,
+                  uniformtext_mode='hide',
+                  autosize=True,
+                  title_font_size = 6,
+                  font_color="white",
+                  title_font_color="white",
+                  margin = dict(autoexpand= False,),
+                          showlegend=False),
+    
+colors = ['Blues']
+
+hogcensjefgender.update_traces(rotation=220,
+                              pull= [0.1, 0.1],      
+                               marker=dict(colors=colors))
+
+
+
+
     
     
+#laundry= href="https://raw.githubusercontent.com/fdealbam/censo2020/main/laundry.svg"
+
     
 ########################################################################
 # A P P 
@@ -1648,8 +1742,11 @@ card_v_derechohab = dbc.Card(
 
 
 # identificadores
-
+#script src="https://kit.fontawesome.com/5af838325e.js" crossorigin="anonymous"
+#FONT_AWESOME = "https://raw.githubusercontent.com/FortAwesome/Font-Awesome-Pro/master/css/all.css?token=CF2BC7F5-DB01-4107-B1F0-4A52BD57E648"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+
+# crossorigin="anonymous"
 server = flask.Flask(__name__)    
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes. 
                                                 LUX, FONT_AWESOME], server=server)
@@ -1664,10 +1761,10 @@ nav_item3 = dbc.NavItem(dbc.NavLink("Metrópolis", href="#"))
 
 default = dbc.NavbarSimple(
     children=[nav_item1,nav_item2,nav_item3],
-    brand="MENU",
+    brand="MENU",  style={"font-size": "12px"},
     brand_href="#",
     sticky="top",
-    className="mb-5",
+    className="mb-12",
 )
 
 body = html.Div([
@@ -1677,32 +1774,51 @@ body = html.Div([
                         ),width ={ "size": 1,  "offset": 1,
                                   "height": "5px"}),
                dbc.Col(html.H4("Reporte estadístico básico de ",
-                        style={'offset' : 1, "size": 6,
-                              "font-size": "15px",
+                        style={'offset' : 0, "size": 5,
+                               
+                              #"margin-left": "-142px",
+                               "font-size": "12px",
                               "color": "grey",
                                "height": "5px",
-                              'textAlign': 'center',
+                              #'textAlign': 'center',
                                #"font-weight": 'bold',
                                "font-family": "Montserrat"
                               })),
-                      ], justify= "center"),               
+            #mapa de la entidad   
+            dbc.Col(dbc.Button(dbc.CardImg(src="https://github.com/fdealbam/censo2020/blob/b94700a88ff29ebb35f6bc6e578e5c30a0266f40/1nleona.png?raw=true"),
+                         #href="https://censo2020-mexico.herokuapp.com/",
+                               style={"background-color": "transparent"}),
+                      md={"size": 3,},
+                      style= {
+                         
+                          "margin-top": "-32px", 
+                             "display": "block", "position": "relative",
+                              "inline": "block",
+                              "column-break-inside": "avoid",
+                              "margin-left": "-600px",
+                              "margin-bottom": "-230px"
+                             }),
+               
+               
+                      ], justify= "start"),               
     dbc.Row(
            [
                dbc.Col(html.H1(noment,
-                        style={ "size": 6, "offset":2,
-                              "font-size": "35px",
+                        style={ "offset":2, "size": 5, 
+                              "margin-left": "162px",
+                               "font-size": "35px",
                                "height": "40px",
                               "color": "dark",
-                              'textAlign': 'center',
+                              #'textAlign': 'center',
                                #"font-weight": 'bold',
                                "font-family": "Montserrat",
                               },)),
-                      ], justify= "center"),            
+                      ], justify= "start"),            
     
     #Cintillo 00    
     dbc.Row(
            [
-               dbc.Col(html.H6(d2),           #Fecha de actualización
+               dbc.Col(html.H6(" "),           #Fecha de actualización
                width={'size' : "auto",
                       'offset' : 1,
                       #'textAlign': 'center',
@@ -1710,13 +1826,17 @@ body = html.Div([
             ], justify= "center"),
     dbc.Row(
            [
-               dbc.Col(html.H6("Fuente: Censo 2020, INEGI"),
-                        width={'size' : "auto",
-                               #"offset":1,
-                              'textAlign': 'center',
-                               "color": "grey",
-}),
-            ], justify= "center"),
+               dbc.Col(html.H6("Fuente: Censo 2020, INEGI",
+                        style={ "offset":2, "size": 5, 
+                              "margin-left": "162px",
+                               "font-size": "10px",
+                               "height": "40px",
+                              "color": "dark",
+                              #'textAlign': 'center',
+                               #"font-weight": 'bold',
+                               "font-family": "Montserrat",
+                              },)),
+                      ], justify= "start"),            
                
     html.Br(),
     
@@ -1901,6 +2021,16 @@ body = html.Div([
      ], no_gutters= True, justify= "start",
      className="blockquote",),
 
+#
+#     dbc.Row(
+#           [
+#           dbc.Col(dcc.Graph(figure=hogcensjefgender),
+#                    style={'size' : 1, "offset":0,
+#                          "margin-top": "-90px"}), 
+#                    
+#            ], #align='start', 
+#        justify ="start"),    
+    
     html.Br(),
     html.Br(),
     html.Br(),
@@ -1922,16 +2052,16 @@ body = html.Div([
            dbc.Col(html.H5([dbc.Badge("Equipo responsable", 
                           href="https://innovation-learning.herokuapp.com/",
                                      )]),
-                  width={'size': 3,  "offset": 4}),
+                  width={'size': 3,  "offset": 4,
+                         #"bg-text" :  "pablo está loquito",
+                        }),
                        ], justify="start",),
     html.Br(),
     html.Br(),
     html.Br(),
 
-    
 
-    
-    html.Br(),
+     html.Br(),
         
             ])
     
